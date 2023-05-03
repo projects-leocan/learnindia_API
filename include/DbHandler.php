@@ -146,7 +146,7 @@ class DbHandler {
         $this->conn->next_result();           
         $response = array();
         while ( $row = $stmt->fetch_assoc()) {     
-            $response[]=$row;
+            $response = $row;
         }
 
         $stmt->close();
@@ -192,7 +192,8 @@ class DbHandler {
             $result=array(
                 'success'=>true,
                 'Message'=> "Content added successfully",
-                'Status'=> "Success"
+                'Status'=> "Success",
+                'last_added'=>$last_added
             );
         }
         else
