@@ -86,5 +86,48 @@ $app->get('/fetchKeyToSuccess',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/addGuidenceContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+
+                $content = $request->getParam('content');
+                $is_photo_set = false;
+                $content_image = null;
+                $content_image2 = null;
+
+                if (isset($_FILES['content_image']) && isset($_FILES['content_image2']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                        $content_image2 = $_FILES['content_image2'];
+                }
+
+                $db = new DbHandler();
+                $result = $db->addGuidenceContent($content,$is_photo_set,$content_image,$content_image2);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateGuidenceContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $is_photo_set = false;
+                $content_image = null;
+                $content_image2 = null;
+
+                if (isset($_FILES['content_image']) && isset($_FILES['content_image2']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                        $content_image2 = $_FILES['content_image2'];
+                }
+
+                $db = new DbHandler();
+                $result = $db->updateGuidenceContent($content,$content_id,$is_photo_set,$content_image,$content_image2);
+        }
+        return $response->withJson($result);
+});
+
 $app->run();
 ?>
