@@ -385,9 +385,9 @@ class DbHandler {
                 }
             } else {
                 $result = array(
-                    'success' => false,
-                    'Message'=> "Failed to update Content",
-                    'Status'=> "Error"
+                    'success' => true,
+                    'Message'=> "Content Updated successfully",
+                    'Status'=> "Success"
                 );
             }
             return $result;
