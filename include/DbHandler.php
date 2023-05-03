@@ -313,19 +313,31 @@ class DbHandler {
                     $result = array(
                         'success' => true,
                         'Message' => 'Content added successfully . but images are not uploaded due to some issues',
-                        'Status'=> "Success"
+                        'Status'=> "Success",
+                        'last_added'=>$last_added
                     );
                 }
             } else {
                 $result = array(
-                    'success' => false,
-                    'Message'=> "Failed to add Content",
-                    'Status'=> "Error"
+                    'success' => true,
+                    'Message'=> "Content added successfully",
+                    'Status'=> "Success",
+                    'last_added'=>$last_added
                 );
             }
             return $result;
 
         }
+        else
+        {
+            $result = array(
+                'success' => true,
+                'Message'=> "Content added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        return $result;
     }
 
     public function updateGuidenceContent($content,$content_id,$is_photo_set,$content_image,$content_image2)
