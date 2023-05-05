@@ -171,6 +171,38 @@ class DbHandler {
         }
         return $result;
     }
+    
+    public function fetchGuidenceContent()
+    {
+        $sql_query="CALL fetchGuidenceContent()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
 
 
     // ================ HOME ==============================
@@ -304,7 +336,7 @@ class DbHandler {
                     $stmt2 = $this->conn->query(" UPDATE career_guidence SET image = '$filename' , image2 = '$filename2' WHERE id = $last_added");
                     $result = array(
                         'success'=>true,
-                        'Message'=> "Content added successfully",
+                        'Message'=> "Content added successfully ",
                         'Status'=> "Success",
                         'last_added'=>$last_added
                     );
@@ -312,7 +344,7 @@ class DbHandler {
                 } else {
                     $result = array(
                         'success' => true,
-                        'Message' => 'Content added successfully . but images are not uploaded due to some issues',
+                        'Message' => 'Content added successfully . but images are not uploaded due to some issues ',
                         'Status'=> "Success",
                         'last_added'=>$last_added
                     );
@@ -320,7 +352,7 @@ class DbHandler {
             } else {
                 $result = array(
                     'success' => true,
-                    'Message'=> "Content added successfully",
+                    'Message'=> "Content added successfully . but images are not uploaded due to some issues ",
                     'Status'=> "Success",
                     'last_added'=>$last_added
                 );
@@ -332,7 +364,7 @@ class DbHandler {
         {
             $result = array(
                 'success' => true,
-                'Message'=> "Content added successfully",
+                'Message'=> "Content added successfully ",
                 'Status'=> "Success",
                 'last_added'=>$last_added
             );
@@ -354,7 +386,6 @@ class DbHandler {
         $stmt1->fetch();
         $stmt1->close();
         $result = array();
-
         if ($is_done == 1) {
             if ($is_photo_set) {
                 if (!file_exists($this->image_path)) {
@@ -386,7 +417,7 @@ class DbHandler {
             } else {
                 $result = array(
                     'success' => true,
-                    'Message'=> "Content Updated successfully",
+                    'Message'=> "Content Updated successfully but images are not uploaded due to some issues ",
                     'Status'=> "Success"
                 );
             }
@@ -397,7 +428,7 @@ class DbHandler {
         {
             $result = array(
                 'success' => true,
-                'Message'=> "Content Updated successfully",
+                'Message'=> "Content Updated successfully  ",
                 'Status'=> "Success"
             );
         }

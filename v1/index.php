@@ -86,6 +86,12 @@ $app->get('/fetchKeyToSuccess',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->get('/fetchGuidenceContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchGuidenceContent();
+        return $response->withJson($result);
+});
+
 $app->post('/addGuidenceContent',function($request, $response, $args) use ($app) {   
         $result = verifyRequiredParams(array('content'));   
         if($result == null){
@@ -116,13 +122,14 @@ $app->post('/updateGuidenceContent',function($request, $response, $args) use ($a
                 $is_photo_set = false;
                 $content_image = null;
                 $content_image2 = null;
-
-                if (isset($_FILES['content_image']) && isset($_FILES['content_image2']) ) {
+                if (isset($_FILES['content_image']) ) {
                         $is_photo_set = true;
                         $content_image = $_FILES['content_image'];
+                }
+                if (isset($_FILES['content_image2']) ) {
+                        $is_photo_set = true;
                         $content_image2 = $_FILES['content_image2'];
                 }
-
                 $db = new DbHandler();
                 $result = $db->updateGuidenceContent($content,$content_id,$is_photo_set,$content_image,$content_image2);
         }
