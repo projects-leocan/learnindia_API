@@ -136,5 +136,33 @@ $app->post('/updateGuidenceContent',function($request, $response, $args) use ($a
         return $response->withJson($result);
 });
 
+$app->post('/addJourneyContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addJourneyContent($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateJourneyContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id','content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $content = $request->getParam('content');
+                $result = $db->updateJourneyContent($content,$content_id,);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchJourneyContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchJourneyContent();
+        return $response->withJson($result);
+});
+
+
 $app->run();
 ?>
