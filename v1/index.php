@@ -193,6 +193,35 @@ $app->get('/fetchCounselingContent',function($request, $response, $args) use ($a
         return $response->withJson($result);
 });
 
+$app->post('/addSuccessStory',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','student_name'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $student_name = $request->getParam('student_name');
+                $result = $db->addSuccessStory($content,$student_name);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateSuccessStory',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id','content','student_name'));    
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $content = $request->getParam('content');
+                $student_name = $request->getParam('student_name');
+                $result = $db->updateSuccessStory($content,$student_name,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchSuccessStory',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchSuccessStory();
+        return $response->withJson($result);
+});
+
 
 $app->run();
 ?>
