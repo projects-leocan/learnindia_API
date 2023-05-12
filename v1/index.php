@@ -164,5 +164,35 @@ $app->get('/fetchJourneyContent',function($request, $response, $args) use ($app)
 });
 
 
+$app->post('/addCounseling',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','heading'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $result = $db->addCounseling($content,$heading);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateCounseling',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id','content','heading'));    
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $result = $db->updateCounseling($content,$heading,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchCounselingContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchCounselingContent();
+        return $response->withJson($result);
+});
+
+
 $app->run();
 ?>
