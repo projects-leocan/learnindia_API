@@ -222,6 +222,63 @@ $app->get('/fetchSuccessStory',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/addAbout',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addAbout($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateAbout',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateAbout($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchAbout',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchAbout();
+        return $response->withJson($result);
+});
+
+
+$app->post('/addAboutInner',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addAboutInner($content);
+        }
+        return $response->withJson($result);
+});
+
+
+$app->post('/updateAboutInner',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateAboutInner($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchAboutInner',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchAboutInner();
+        return $response->withJson($result);
+});
+
+
 
 $app->run();
 ?>
