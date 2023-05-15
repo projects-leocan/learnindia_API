@@ -397,6 +397,38 @@ class DbHandler {
         return $result;
     }
 
+    public function fetchTeamMember()
+    {
+        $sql_query="CALL fetchTeamMember()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 
     // ================ HOME ==============================
 

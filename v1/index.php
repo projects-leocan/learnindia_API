@@ -348,6 +348,11 @@ $app->post('/deleteTeamMember',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->get('/fetchTeamMember',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchTeamMember();
+        return $response->withJson($result);
+});
 
 $app->run();
 ?>
