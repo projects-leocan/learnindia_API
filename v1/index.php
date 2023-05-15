@@ -410,5 +410,64 @@ $app->get('/fetchblogInnerContent',function($request, $response, $args) use ($ap
 });
 
 
+$app->post('/addCareerArticles',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','heading'));   
+        if($result == null){
+
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $is_photo_set = false;
+                $content_image = null;
+
+                if (isset($_FILES['content_image']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                }
+
+                $db = new DbHandler();
+                $result = $db->addCareerArticles($content,$heading,$is_photo_set,$content_image);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateCareerArticles',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','heading','content_id'));   
+        if($result == null){
+
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $content_id = $request->getParam('content_id');
+                $is_photo_set = false;
+                $content_image = null;
+
+                if (isset($_FILES['content_image']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                }
+
+                $db = new DbHandler();
+                $result = $db->updateCareerArticles($content,$heading,$content_id,$is_photo_set,$content_image);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/deleteCareerArticles',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $result = $db->deleteCareerArticles($content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchCareerArticles',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchCareerArticles();
+        return $response->withJson($result);
+});
+
+
+
 $app->run();
 ?>

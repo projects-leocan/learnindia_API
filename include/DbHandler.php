@@ -493,6 +493,38 @@ class DbHandler {
         return $result;
     }
 
+    public function fetchCareerArticles()
+    {
+        $sql_query="CALL fetchCareerArticles()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 
     // ================ HOME ==============================
 
@@ -1367,6 +1399,143 @@ class DbHandler {
         }
         return $result;
     }
+
+    public function addCareerArticles($content,$heading,$is_photo_set,$content_image)
+    {
+        $sql_query="CALL addCareerArticles(?,?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ss', $content,$heading);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @last_added AS last_added,@is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($last_added,$is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+        $result = array();
+
+        if ($is_photo_set) {
+                if (!file_exists($this->image_path)) {
+                    mkdir($this->image_path, 0777, true);
+                }
+
+                $extension = pathinfo($content_image['name'], PATHINFO_EXTENSION);
+                $filename = time().'_img'.'.'.$extension;
+                $file = $this->image_path . $filename;
+
+                if (move_uploaded_file($content_image['tmp_name'], $file) ) {                    
+                    $stmt2 = $this->conn->query(" UPDATE career_articles SET image = '$filename'  WHERE id = $last_added");
+                    $result = array(
+                        'success'=>true,
+                        'Message'=> "Content added successfully ",
+                        'Status'=> "Success",
+                        'last_added'=>$last_added
+                    );
+
+                } else {
+                    $result = array(
+                        'success' => true,
+                        'Message' => 'Content added successfully . but images are not uploaded due to some issues ',
+                        'Status'=> "Success",
+                        'last_added'=>$last_added
+                    );
+                }
+            } else {
+                $result = array(
+                    'success' => true,
+                    'Message'=> "Content added successfully . but images are not uploaded due to some issues ",
+                    'Status'=> "Success",
+                    'last_added'=>$last_added
+                );
+            }
+            return $result;
+    }
+
+
+    public function updateCareerArticles($content,$heading,$content_id,$is_photo_set,$content_image)
+    {
+        $sql_query="CALL updateCareerArticles(?,?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ssi', $content,$heading,$content_id);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+        $result = array();
+
+        if ($is_photo_set) {
+                if (!file_exists($this->image_path)) {
+                    mkdir($this->image_path, 0777, true);
+                }
+
+                $extension = pathinfo($content_image['name'], PATHINFO_EXTENSION);
+                $filename = time().'_img'.'.'.$extension;
+                $file = $this->image_path . $filename;
+
+                if (move_uploaded_file($content_image['tmp_name'], $file) ) {                    
+                    $stmt2 = $this->conn->query(" UPDATE career_articles SET image = '$filename'  WHERE id = $content_id");
+                    $result = array(
+                        'success'=>true,
+                        'Message'=> "Content added successfully ",
+                        'Status'=> "Success"
+                        
+                    );
+
+                } else {
+                    $result = array(
+                        'success' => true,
+                        'Message' => 'Content added successfully . but images are not uploaded due to some issues ',
+                        'Status'=> "Success"
+                
+                    );
+                }
+            } else {
+                $result = array(
+                    'success' => true,
+                    'Message'=> "Content added successfully . but images are not uploaded due to some issues ",
+                    'Status'=> "Success"
+                );
+            }
+            return $result;
+    }
+
+    public function deleteCareerArticles($id)
+    {
+        $sql_query="CALL deleteCareerArticles(?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i',$id);
+        $stmt->execute();
+        $stmt->close();
+        
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Career Article Deleted Successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to Delete Career Article",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 }
 
 ?>
