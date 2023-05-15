@@ -1105,7 +1105,7 @@ class DbHandler {
         $stmt1->fetch();
         $stmt1->close();
         $result = array();
-        if ($is_done == 1) {
+    
             if ($is_photo_set) {
                 if (!file_exists($this->image_path)) {
                     mkdir($this->image_path, 0777, true);
@@ -1119,7 +1119,7 @@ class DbHandler {
                     $stmt2 = $this->conn->query(" UPDATE our_team SET image = '$filename' WHERE id = $content_id");
                     $result = array(
                         'success'=>true,
-                        'Message'=> "Content Updated successfully",
+                        'Message'=> "Content Updated successfully ",
                         'Status'=> "Success"
                     );
 
@@ -1138,17 +1138,6 @@ class DbHandler {
                 );
             }
             return $result;
-
-        }
-        else
-        {
-            $result = array(
-                'success' => true,
-                'Message'=> "Content Updated successfully  ",
-                'Status'=> "Success"
-            );
-        }
-        return $result;
     }
 
     public function deleteTeamMember($id)
