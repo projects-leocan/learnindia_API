@@ -294,6 +294,12 @@ $app->post('/addEducationLogo',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->get('/fetchEducationLogo',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchEducationLogo();
+        return $response->withJson($result);
+});
+
 
 
 $app->run();
