@@ -354,5 +354,61 @@ $app->get('/fetchTeamMember',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+
+$app->post('/addBlogContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addBlogContent($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateBlogContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateBlogContent($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchBlogContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchBlogContent();
+        return $response->withJson($result);
+});
+
+$app->post('/addBlogInner',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addBlogInner($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateblogInner',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateblogInner($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchblogInnerContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchblogInnerContent();
+        return $response->withJson($result);
+});
+
+
 $app->run();
 ?>
