@@ -4,6 +4,7 @@ class DbHandler {
     private $conn;
     private $image_path='../uploads/';
     private $image_path2='../uploads/';
+    private $image_path3='../uploads/';
 	
     function __construct() {
         require_once dirname(__FILE__) . '/DbConnect.php';
@@ -919,6 +920,46 @@ class DbHandler {
         }
         return $result;
     }
+
+    public function addEducationLogo($photos, $is_photo_set)
+    {
+        if ($is_photo_set) {
+            if (!file_exists($this->image_path3)) {
+                mkdir($this->image_path3, 0777, true);
+            }
+
+            $count = count($photos["name"]);
+
+            for ($i = 0; $i < $count; $i++) {
+                $extension = pathinfo($photos['name'][$i], PATHINFO_EXTENSION);
+                $filename = time() . $i . '.' . $extension;
+                $file = $this->image_path3 . $filename;
+
+
+                if (move_uploaded_file($photos['tmp_name'][$i], $file)) {
+                    $sql_query = "INSERT INTO `education_logo`(`image`) VALUES('$filename');";
+                    $stmt1 = $this->conn->query($sql_query);
+                    $result = array(
+                        'success' => true,
+                        'message' => 'Education Logo Added Sucessfully'
+
+                    );
+                } else {
+                    $result = array(
+                        'success' => true,
+                        'message' => 'Failed to Add Education Logo '
+                    );
+                }
+            }
+        } else {
+            $result = array(
+                'success' => false,
+                'message' => 'No Images Selected '
+            );
+        }
+        return $result;
+    }
+
 }
 
 ?>

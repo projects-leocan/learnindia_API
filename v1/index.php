@@ -278,6 +278,22 @@ $app->get('/fetchAboutInner',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/addEducationLogo',function($request, $response, $args) use ($app) {   
+        $db = new DbHandler();
+        $is_image_set = false;
+        $photos = null;
+
+        if (isset($_FILES['image'])) {
+                $is_image_set = true;
+                $photos = $_FILES['image'];
+        } else {
+                $is_image_set = true;
+                $photos = $_FILES['image'];
+        }
+        $result = $db->addEducationLogo($photos, $is_image_set);
+        return $response->withJson($result);
+});
+
 
 
 $app->run();
