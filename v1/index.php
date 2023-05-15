@@ -301,6 +301,53 @@ $app->get('/fetchEducationLogo',function($request, $response, $args) use ($app) 
 });
 
 
+$app->post('/addTeamMember',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('teacher_name'));   
+        if($result == null){
+
+                $teacher_name = $request->getParam('teacher_name');
+                $is_photo_set = false;
+                $content_image = null;
+
+                if (isset($_FILES['content_image']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                }
+
+                $db = new DbHandler();
+                $result = $db->addTeamMember($teacher_name,$is_photo_set,$content_image);
+        }
+        return $response->withJson($result);
+});
+
+
+$app->post('/updateTeamMember',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('teacher_name','content_id'));   
+        if($result == null){
+                $teacher_name = $request->getParam('teacher_name');
+                $content_id = $request->getParam('content_id');
+                $is_photo_set = false;
+                $content_image = null;
+                if (isset($_FILES['content_image']) ) {
+                        $is_photo_set = true;
+                        $content_image = $_FILES['content_image'];
+                }
+                $db = new DbHandler();
+                $result = $db->updateTeamMember($teacher_name,$content_id,$is_photo_set,$content_image);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/deleteTeamMember',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('member_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $member_id = $request->getParam('member_id');
+                $result = $db->deleteTeamMember($member_id);
+        }
+        return $response->withJson($result);
+});
+
 
 $app->run();
 ?>
