@@ -467,6 +467,27 @@ $app->get('/fetchCareerArticles',function($request, $response, $args) use ($app)
         return $response->withJson($result);
 });
 
+$app->post('/addServeyContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addServeyContent($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateServeyContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateServeyContent($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
 
 
 $app->run();
