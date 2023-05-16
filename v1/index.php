@@ -578,6 +578,15 @@ $app->post('/updateTerms_condition',function($request, $response, $args) use ($a
         return $response->withJson($result);
 });
 
+$app->post('/deleteTerms_conditon',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $result = $db->deleteTerms_conditon($content_id,);
+        }
+        return $response->withJson($result);
+});
 
 
 $app->run();

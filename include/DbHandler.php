@@ -1932,6 +1932,38 @@ class DbHandler {
         return $result;
     }
 
+    public function deleteTerms_conditon($id)
+    {
+        $sql_query="CALL deleteTerms_conditon(?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i',$id);
+        $stmt->execute();
+        $stmt->close();
+        
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content Deleted Successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to Delete Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 }
 
 ?>
