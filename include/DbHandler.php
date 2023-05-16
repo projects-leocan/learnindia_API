@@ -525,6 +525,134 @@ class DbHandler {
         return $result;
     }
 
+    public function fetchServeyContent()
+    {
+        $sql_query="CALL fetchServeyContent()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function fetchTerms()
+    {
+        $sql_query="CALL fetchTerms()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function fetchTermsContent()
+    {
+        $sql_query="CALL fetchTermsContent()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function fetchTerms_condition()
+    {
+        $sql_query="CALL fetchTerms_condition()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 
     // ================ HOME ==============================
 
@@ -1605,6 +1733,205 @@ class DbHandler {
         }
         return $result;
     }
+
+
+    // ================ TERMS & CONDITONS SECTION  ==============================
+
+    public function addTerms($content)
+    {
+        $sql_query="CALL addTerms(?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('s', $content);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to add Content.",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function updateTerms($content,$id)
+    {
+        $sql_query="CALL updateTerms(?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('si',$content,$id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content Updated successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to update Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function addTermsContent($content)
+    {
+        $sql_query="CALL addTermsContent(?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('s', $content);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to add Content.",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function updateTermsContent($content,$id)
+    {
+        $sql_query="CALL updateTermsContent(?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('si',$content,$id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content Updated successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to update Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function addTerms_condition($content,$heading)
+    {
+        $sql_query="CALL addTerms_condition(?,?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ss', $content,$heading);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to add Content.",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function updateTerms_condition($content,$heading,$id)
+    {
+        $sql_query="CALL updateTerms_condition(?,?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ssi',$content,$heading,$id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content Updated successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to update Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 }
 
 ?>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 16, 2023 at 10:21 AM
+-- Generation Time: May 16, 2023 at 12:31 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.1
 
@@ -160,6 +160,21 @@ END IF;
 
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addServeyContent` (IN `givenText` LONGTEXT, OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `survey` (`content`) VALUES (givenText);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addSuccessStory` (IN `givenText` LONGTEXT, IN `sName` VARCHAR(50), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
 
 SET is_done = 0;
@@ -181,6 +196,51 @@ SET is_done = 0;
 SET last_added = 0;
 
 INSERT INTO `our_team` (`teacher_name`) VALUES (t_name);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addTerms` (IN `givenText` LONGTEXT, OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `terms` (`content`) VALUES (givenText);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addTermsContent` (IN `givenText` LONGTEXT, OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `add_terms` (`content`) VALUES (givenText);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addTerms_condition` (IN `givenText` LONGTEXT, IN `head` VARCHAR(255), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `terms_condition` (`content`,`heading`) VALUES (givenText,head);
 
 IF Row_Count() > 0 THEN
 SET last_added  = last_insert_id();
@@ -274,12 +334,28 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchKeyToSuccess` ()  BEGIN
 SELECT * FROM `home`;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchServeyContent` ()  BEGIN
+SELECT * FROM `survey`;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchSuccessStory` ()  BEGIN
 SELECT * FROM `success_stories`;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchTeamMember` ()  BEGIN
 SELECT * FROM `our_team`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchTerms` ()  BEGIN
+SELECT * FROM `terms`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchTermsContent` ()  BEGIN
+SELECT * FROM `add_terms`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchTerms_condition` ()  BEGIN
+SELECT * FROM `terms_condition`;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateAbout` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
@@ -392,6 +468,18 @@ IF Row_Count() > 0 THEN
 end IF;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateServeyContent` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `survey`
+SET content	 = givenText
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateSuccessStory` (IN `givenText` LONGTEXT, IN `sName` VARCHAR(50), IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
 set is_done =  0;
 
@@ -410,6 +498,43 @@ set is_done =  0;
 
 UPDATE `our_team`
 SET teacher_name = t_name
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateTerms` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` INT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `terms`
+SET content	 = givenText
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateTermsContent` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `add_terms`
+SET content	 = givenText
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateTerms_condition` (IN `givenText` LONGTEXT, IN `head` VARCHAR(255), IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `terms_condition`
+SET content	 = givenText,
+heading = head
 WHERE id = text_id;
 
 IF Row_Count() > 0 THEN
@@ -454,6 +579,17 @@ CREATE TABLE `about_main` (
 
 INSERT INTO `about_main` (`id`, `content`) VALUES
 (1, '<p>&nbsp;minus doloribus <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus in aperiam dolor dolorum minima error eius sit nulla quod mollitia, praesentium soluta, eos vitae et. Quasi sapiente dolore, repellendus distinctio officiis voluptatibus ducimus, doloremque maiores mollitia sint eos quae fugiat magnam itaque hic nam</strong>quod ipsa tempore autem veniam architecto neque. Officia maiores perspiciatis ratione enim omnis harum ullam eos possimus recusandae voluptas in aliquam a sunt aliquid ut at natus, vel accusantium perferendis vero explicabo fugit adipisci. Velit veritatis quos aliquid, ullam incidunt est alias, sunt quidem distinctio, praesentium libero ex aut labore. Eligendi harum nam odit.</p>');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `add_terms`
+--
+
+CREATE TABLE `add_terms` (
+  `id` int(11) NOT NULL,
+  `content` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -685,6 +821,47 @@ INSERT INTO `success_stories` (`id`, `content`, `student_name`) VALUES
 (1, '<p>It is a long <strong>established</strong> fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now.</p>', 'Rin Nohara - Student'),
 (2, '<p>It is a long <strong>established</strong> fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now</p>', 'kakashi  Hatake -  Student');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `survey`
+--
+
+CREATE TABLE `survey` (
+  `id` int(11) NOT NULL,
+  `content` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `survey`
+--
+
+INSERT INTO `survey` (`id`, `content`) VALUES
+(1, '<p><strong>Contrary</strong> to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.Please email us with details if you can help.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `terms`
+--
+
+CREATE TABLE `terms` (
+  `id` int(11) NOT NULL,
+  `content` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `terms_condition`
+--
+
+CREATE TABLE `terms_condition` (
+  `id` int(11) NOT NULL,
+  `heading` text NOT NULL,
+  `content` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Indexes for dumped tables
 --
@@ -699,6 +876,12 @@ ALTER TABLE `about_inner`
 -- Indexes for table `about_main`
 --
 ALTER TABLE `about_main`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `add_terms`
+--
+ALTER TABLE `add_terms`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -774,6 +957,24 @@ ALTER TABLE `success_stories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `survey`
+--
+ALTER TABLE `survey`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `terms`
+--
+ALTER TABLE `terms`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `terms_condition`
+--
+ALTER TABLE `terms_condition`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -788,6 +989,12 @@ ALTER TABLE `about_inner`
 --
 ALTER TABLE `about_main`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `add_terms`
+--
+ALTER TABLE `add_terms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `admin`
@@ -860,6 +1067,24 @@ ALTER TABLE `our_team`
 --
 ALTER TABLE `success_stories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `survey`
+--
+ALTER TABLE `survey`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `terms`
+--
+ALTER TABLE `terms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `terms_condition`
+--
+ALTER TABLE `terms_condition`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -488,6 +488,96 @@ $app->post('/updateServeyContent',function($request, $response, $args) use ($app
         return $response->withJson($result);
 });
 
+$app->get('/fetchServeyContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchServeyContent();
+        return $response->withJson($result);
+});
+
+$app->post('/addTerms',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addTerms($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateTerms',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateTerms($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchTerms',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchTerms();
+        return $response->withJson($result);
+});
+
+$app->post('/addTermsContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $result = $db->addTermsContent($content);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateTermsContent',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','content_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $content_id = $request->getParam('content_id');
+                $result = $db->updateTermsContent($content,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchTermsContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchTermsContent();
+        return $response->withJson($result);
+});
+
+
+$app->get('/fetchTerms_condition',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchTerms_condition();
+        return $response->withJson($result);
+});
+
+$app->post('/addTerms_condition',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','heading'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $result = $db->addTerms_condition($content,$heading);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateTerms_condition',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id','content','heading'));    
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $content = $request->getParam('content');
+                $heading = $request->getParam('heading');
+                $result = $db->updateTerms_condition($content,$heading,$content_id);
+        }
+        return $response->withJson($result);
+});
+
 
 
 $app->run();
