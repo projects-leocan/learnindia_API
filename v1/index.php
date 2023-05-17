@@ -588,6 +588,60 @@ $app->post('/deleteTerms_conditon',function($request, $response, $args) use ($ap
         return $response->withJson($result);
 });
 
+$app->post('/addContact',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content','contact_num','email','address'));   
+        if($result == null){
+                $db = new DbHandler();
+                $content = $request->getParam('content');
+                $contact_num = $request->getParam('contact_num');
+                $email = $request->getParam('email');
+                $address = $request->getParam('address');
+                $result = $db->addContact($content,$contact_num,$email,$address);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateContact',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id','content','contact_num','email','address'));     
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $content = $request->getParam('content');
+                $contact_num = $request->getParam('contact_num');
+                $email = $request->getParam('email');
+                $address = $request->getParam('address');
+                $result = $db->updateContact($content,$contact_num,$email,$address,$content_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchContact',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchContact();
+        return $response->withJson($result);
+});
+
+$app->post('/fillContactForm',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('user_name','email','meassge'));   
+        if($result == null){
+                $db = new DbHandler();
+                $user_name = $request->getParam('user_name');
+                $email = $request->getParam('email');
+                $meassge = $request->getParam('meassge');
+                $result = $db->fillContactForm($user_name,$email,$meassge);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchContactFormDetails',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchContactFormDetails();
+        return $response->withJson($result);
+});
+
+
+
+
 
 $app->run();
 ?>
