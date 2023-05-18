@@ -740,5 +740,15 @@ $app->post('/storeAnswers',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/fetchAnswers',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('email'));   
+        if($result == null){
+                $db = new DbHandler();
+                $email = $request->getParam('email');
+                $result = $db->fetchAnswers($email);
+        }
+        return $response->withJson($result);
+});
+
 $app->run();
 ?>
