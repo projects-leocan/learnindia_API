@@ -639,9 +639,85 @@ $app->get('/fetchContactFormDetails',function($request, $response, $args) use ($
         return $response->withJson($result);
 });
 
+$app->post('/addQuestionnaire',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('question'));   
+        if($result == null){
+                $db = new DbHandler();
+                $question = $request->getParam('question');
+                $result = $db->addQuestionnaire($question);
+        }
+        return $response->withJson($result);
+});
 
+$app->post('/updateQuestionnaire',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('question','question_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $question = $request->getParam('question');
+                $question_id = $request->getParam('question_id');
+                $result = $db->updateQuestionnaire($question,$question_id);
+        }
+        return $response->withJson($result);
+});
 
+$app->post('/deleteQuestionnaire',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('question_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $question_id = $request->getParam('question_id');
+                $result = $db->deleteQuestionnaire($question_id);
+        }
+        return $response->withJson($result);
+});
 
+$app->post('/addOption',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('option','question_id'));    
+        if($result == null){
+                $db = new DbHandler();
+                $option = $request->getParam('option');
+                $question_id = $request->getParam('question_id');
+                $result = $db->addOption($option,$question_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->post('/updateOption',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('option','question_id'));    
+        if($result == null){
+                $db = new DbHandler();
+                $option = $request->getParam('option');
+                $question_id = $request->getParam('question_id');
+                $result = $db->updateOption($option,$question_id);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchQuestionnaire',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchQuestionnaire();
+        return $response->withJson($result);
+});
+
+$app->post('/fillServeyForm',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('first_name','last_name','email','date_of_birth','male','grade'));    
+        if($result == null){
+                $db = new DbHandler();
+                $first_name = $request->getParam('first_name');
+                $last_name = $request->getParam('last_name');
+                $email = $request->getParam('email');
+                $date_of_birth = $request->getParam('date_of_birth');
+                $male = $request->getParam('male');
+                $grade = $request->getParam('grade');
+                $result = $db->fillServeyForm($first_name,$last_name,$email,$date_of_birth,$male,$grade);
+        }
+        return $response->withJson($result);
+});
+
+$app->get('/fetchServeyForm',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchServeyForm();
+        return $response->withJson($result);
+});
 
 $app->run();
 ?>

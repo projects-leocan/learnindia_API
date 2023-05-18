@@ -717,6 +717,71 @@ class DbHandler {
         return $result;
     }
 
+    public function fetchQuestionnaire()
+    {
+        $sql_query="CALL fetchQuestionnaire()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+    
+        $stmt->close();
+    
+        if (count($response)>0)
+        {
+                $result=array(
+                    'success'=>true,
+                    'Message'=> "Content fetched successfully",
+                    'Status'=> "Success",
+                    'Response'=>$response
+                );
+        }
+        else
+        {
+                $result=array(
+                    'success'=>false,
+                    'Message'=> "Failed to fetch Content",
+                    'Status'=> "Error"
+                );
+        }
+        return $result;
+    }
+
+
+    public function fetchServeyForm()
+    {
+        $sql_query="CALL fetchServeyForm()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+    
+        $stmt->close();
+    
+        if (count($response)>0)
+        {
+                $result=array(
+                    'success'=>true,
+                    'Message'=> "Content fetched successfully",
+                    'Status'=> "Success",
+                    'Response'=>$response
+                );
+        }
+        else
+        {
+                $result=array(
+                    'success'=>false,
+                    'Message'=> "Failed to fetch Content",
+                    'Status'=> "Error"
+                );
+        }
+        return $result;
+    }
+
 
     // ================ HOME ==============================
 
@@ -2126,9 +2191,202 @@ class DbHandler {
         return $result;
     }
 
-    
+    public function addQuestionnaire($question)
+    {
+        $sql_query="CALL addQuestionnaire(?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('s', $question);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Question added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to add Question.",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
 
-    
+    public function updateQuestionnaire($question,$question_id)
+    {
+        $sql_query="CALL updateQuestionnaire(?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('si',$question,$question_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Question Updated successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to update Question",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function deleteQuestionnaire($question_id)
+    {
+        $sql_query="CALL deleteQuestionnaire(?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i',$question_id);
+        $stmt->execute();
+        $stmt->close();
+        
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Question Deleted Successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to Delete Question",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function addOption($option,$question_id)
+    {
+        $sql_query="CALL addOption(?,?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('si', $option,$question_id);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Option added successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to add Question.",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function updateOption($question,$question_id)
+    {
+        $sql_query="CALL updateOption(?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('si',$question,$question_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "option Updated successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to update option",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+
+    public function fillServeyForm($first_name,$last_name,$email,$date_of_birth,$male,$grade)
+    {
+        $sql_query="CALL fillServeyForm(?,?,?,?,?,?,@is_done,@last_added)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ssssss', $first_name,$last_name,$email,$date_of_birth,$male,$grade);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done,@last_added AS last_added");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done, $last_added);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Form submitted successfully",
+                'Status'=> "Success",
+                'last_added'=>$last_added
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to submit form",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 }
 
 ?>
