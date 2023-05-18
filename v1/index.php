@@ -729,5 +729,16 @@ $app->post('/deleteServeyResponse',function($request, $response, $args) use ($ap
         return $response->withJson($result);
 });
 
+$app->post('/storeAnswers',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('answer','user_name'));   
+        if($result == null){
+                $db = new DbHandler();
+                $answer = $request->getParam('answer');
+                $user_name = $request->getParam('user_name');
+                $result = $db->storeAnswers($answer,$user_name);
+        }
+        return $response->withJson($result);
+});
+
 $app->run();
 ?>

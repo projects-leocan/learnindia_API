@@ -2352,11 +2352,11 @@ class DbHandler {
         return $result;
     }
 
-    public function fillServeyForm($first_name,$last_name,$email,$date_of_birth,$male,$grade)
+    public function fillServeyForm($first_name,$last_name,$email,$date_of_birth,$gender,$grade)
     {
         $sql_query="CALL fillServeyForm(?,?,?,?,?,?,@is_done,@last_added)";
         $stmt = $this->conn->prepare($sql_query);
-        $stmt->bind_param('ssssss', $first_name,$last_name,$email,$date_of_birth,$male,$grade);
+        $stmt->bind_param('ssssss', $first_name,$last_name,$email,$date_of_birth,$gender,$grade);
         $stmt->execute();
         $stmt->close();
                 
@@ -2416,6 +2416,39 @@ class DbHandler {
         }
         return $result;
     }
+
+    public function storeAnswers($answer,$user_name)
+    {
+        $sql_query="CALL storeAnswers(?,?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ss', $answer,$user_name);
+        $stmt->execute();
+        $stmt->close();
+                
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Form filled successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fill form",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
 
 }
 
