@@ -699,16 +699,16 @@ $app->get('/fetchQuestionnaire',function($request, $response, $args) use ($app) 
 });
 
 $app->post('/fillServeyForm',function($request, $response, $args) use ($app) {   
-        $result = verifyRequiredParams(array('first_name','last_name','email','date_of_birth','male','grade'));    
+        $result = verifyRequiredParams(array('first_name','last_name','email','date_of_birth','gender','grade'));    
         if($result == null){
                 $db = new DbHandler();
                 $first_name = $request->getParam('first_name');
                 $last_name = $request->getParam('last_name');
                 $email = $request->getParam('email');
                 $date_of_birth = $request->getParam('date_of_birth');
-                $male = $request->getParam('male');
+                $gender = $request->getParam('gender');
                 $grade = $request->getParam('grade');
-                $result = $db->fillServeyForm($first_name,$last_name,$email,$date_of_birth,$male,$grade);
+                $result = $db->fillServeyForm($first_name,$last_name,$email,$date_of_birth,$gender,$grade);
         }
         return $response->withJson($result);
 });
