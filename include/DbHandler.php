@@ -1863,7 +1863,6 @@ class DbHandler {
         return $result;
     }
 
-
     // ================ TERMS & CONDITONS SECTION  ==============================
 
     public function addTerms($content)
@@ -2353,7 +2352,6 @@ class DbHandler {
         return $result;
     }
 
-
     public function fillServeyForm($first_name,$last_name,$email,$date_of_birth,$male,$grade)
     {
         $sql_query="CALL fillServeyForm(?,?,?,?,?,?,@is_done,@last_added)";
@@ -2381,6 +2379,38 @@ class DbHandler {
             $result=array(
                 'success'=>false,
                 'Message'=> "Failed to submit form",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+    public function deleteServeyResponse($user_id)
+    {
+        $sql_query="CALL deleteServeyResponse(?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i',$user_id);
+        $stmt->execute();
+        $stmt->close();
+        
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Response Deleted Successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to Delete Response",
                 'Status'=> "Error"
             );
         }

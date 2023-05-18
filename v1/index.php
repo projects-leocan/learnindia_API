@@ -719,5 +719,15 @@ $app->get('/fetchServeyForm',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/deleteServeyResponse',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('user_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $user_id = $request->getParam('user_id');
+                $result = $db->deleteServeyResponse($user_id);
+        }
+        return $response->withJson($result);
+});
+
 $app->run();
 ?>
