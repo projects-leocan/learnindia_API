@@ -3,7 +3,7 @@
 //require '.././libs/Slim/Slim.php';
 require '../vendor/autoload.php';
 include '../include/DbHandler.php';
-include '../models/Messages.php';
+// include '../models/Messages.php';
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Credentials: true");
 
@@ -692,11 +692,18 @@ $app->post('/updateOption',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
-$app->get('/fetchQuestionnaire',function($request, $response, $args) use ($app) {      
-        $db = new DbHandler();
-        $result = $db->fetchQuestionnaire();
+$app->post('/fetchQuestionnaire',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('page_num','page_size'));    
+        if($result == null){
+                $db = new DbHandler();
+                $page_num = $request->getParam('page_num');
+                $page_size = $request->getParam('page_size');
+                $result = $db->fetchQuestionnaire($page_num,$page_size);
+        }
         return $response->withJson($result);
 });
+
+
 
 $app->post('/fillServeyForm',function($request, $response, $args) use ($app) {   
         $result = verifyRequiredParams(array('first_name','last_name','email','date_of_birth','gender','grade'));    

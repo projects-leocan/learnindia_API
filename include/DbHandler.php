@@ -717,38 +717,49 @@ class DbHandler {
         return $result;
     }
 
-    public function fetchQuestionnaire()
+
+    public function fetchQuestionnaire($page_number,$page_size)
     {
-        $sql_query="CALL fetchQuestionnaire()"; 
-        $stmt = $this->conn->query($sql_query); 
-        $this->conn->next_result();           
+        $sql_query="CALL fetchQuestionnaire(?,?,@totalQuestions)";    
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('ii', $page_number,$page_size); 
+        $stmt->execute();
+    
+        $res = $stmt->get_result();
         $response = array();
-        while ( $row = $stmt->fetch_assoc()) {     
-            $response[] = $row;
+
+        while($record = $res->fetch_assoc()){
+            $response[] = $record;
         }
-    
+
         $stmt->close();
-    
-        if (count($response)>0)
-        {
-                $result=array(
-                    'success'=>true,
-                    'Message'=> "Content fetched successfully",
-                    'Status'=> "Success",
-                    'Response'=>$response
-                );
+
+        $stmt1 = $this->conn->prepare("SELECT @totalQuestions AS totalQuestions");
+        $stmt1->execute();
+        $stmt1->bind_result($totalQuestions);       
+        $stmt1->fetch();
+        $stmt1->close();
+
+        if (count($response) > 0) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Answers fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response,
+                'totalQuestions'=>$totalQuestions
+            );
         }
         else
-        {
-                $result=array(
-                    'success'=>false,
-                    'Message'=> "Failed to fetch Content",
-                    'Status'=> "Error"
-                );
+        { 
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Answer",
+                'Status'=> "Error"
+            );
         }
         return $result;
+        
     }
-
 
     public function fetchServeyForm()
     {
