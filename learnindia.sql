@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 16, 2023 at 12:31 PM
+-- Generation Time: May 19, 2023 at 06:04 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.1
 
@@ -100,6 +100,21 @@ END IF;
 
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addContact` (IN `givenText` LONGTEXT, IN `con_no` VARCHAR(20), IN `email` VARCHAR(30), IN `given_address` VARCHAR(255), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `contact` (`content`,`contact_num`,`email`,`address`) VALUES (givenText,con_no,email,given_address);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `addCounseling` (IN `givenText` LONGTEXT, IN `head` VARCHAR(255), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
 
 SET is_done = 0;
@@ -151,6 +166,36 @@ SET is_done = 0;
 SET last_added = 0;
 
 INSERT INTO `home` (`content`) VALUES (givenText);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addOption` (IN `opt` LONGTEXT, IN `q_id` INT(11), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `options` (`options`,`question_id`) VALUES (opt,q_id);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `addQuestionnaire` (IN `givenText` LONGTEXT, OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `questionnaire` (`question`) VALUES (givenText);
 
 IF Row_Count() > 0 THEN
 SET last_added  = last_insert_id();
@@ -281,10 +326,43 @@ IF Row_Count() > 0 THEN
 end IF;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteQuestionnaire` (IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+DELETE FROM `questionnaire`
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteServeyResponse` (IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+DELETE FROM `survey_form`
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteTeamMember` (IN `text_id` INT(11), OUT `is_done` INT(4))  BEGIN
 set is_done =  0;
 
 DELETE FROM `our_team`
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteTerms_conditon` (IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+DELETE FROM `terms_condition`
 WHERE id = text_id;
 
 IF Row_Count() > 0 THEN
@@ -300,6 +378,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchAboutInner` ()  BEGIN
 SELECT * FROM `about_inner`;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchAnswers` (IN `eml` VARCHAR(30))  SELECT * FROM `answers` WHERE `user_name` = eml$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchBlogContent` ()  BEGIN
 SELECT * FROM `blog`;
 END$$
@@ -310,6 +390,14 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchCareerArticles` ()  BEGIN
 SELECT * FROM `career_articles`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchContact` ()  BEGIN
+SELECT * FROM `contact`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchContactFormDetails` ()  BEGIN
+SELECT * FROM `contact_form` ORDER by id DESC;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchCounselingContent` ()  BEGIN
@@ -334,8 +422,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchKeyToSuccess` ()  BEGIN
 SELECT * FROM `home`;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchQuestionnaire` ()  BEGIN
+
+SELECT q.*, GROUP_CONCAT(o.options) AS options
+FROM questionnaire AS q
+JOIN options AS o ON q.id = o.question_id
+GROUP BY q.id, q.question;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchServeyContent` ()  BEGIN
 SELECT * FROM `survey`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchServeyForm` ()  BEGIN
+SELECT * FROM `survey_form`;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchSuccessStory` ()  BEGIN
@@ -356,6 +456,49 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fetchTerms_condition` ()  BEGIN
 SELECT * FROM `terms_condition`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fillContactForm` (IN `u_name` VARCHAR(30), IN `eml` VARCHAR(30), IN `msg` TEXT, OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `contact_form`(`user_name`,`email`,`message`) VALUES (u_name,eml,msg);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fillServeyForm` (IN `fname` VARCHAR(25), IN `lname` VARCHAR(25), IN `eml` VARCHAR(25), IN `dob` VARCHAR(20), IN `gndr` VARCHAR(20), IN `grd` VARCHAR(30), OUT `is_done` TINYINT(4), OUT `last_added` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+SET last_added = 0;
+
+INSERT INTO `survey_form` (`first_name`,`last_name`,`email`,`date_of_birth`,`gender`,`grade`) VALUES (fname,lname,eml,dob,gndr,grd);
+
+IF Row_Count() > 0 THEN
+SET last_added  = last_insert_id();
+SET is_done = 1;
+END IF;
+
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `storeAnswers` (IN `ans` LONGTEXT, IN `u_name` VARCHAR(30), OUT `is_done` TINYINT(4))  BEGIN
+
+SET is_done = 0;
+
+INSERT INTO `answers` (`answer`,`user_name`) VALUES (ans,u_name);
+
+IF Row_Count() > 0 THEN
+SET is_done = 1;
+END IF;
+
+
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateAbout` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
@@ -419,6 +562,21 @@ IF Row_Count() > 0 THEN
 end IF;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateContact` (IN `givenText` LONGTEXT, IN `co_no` VARCHAR(20), IN `email_add` VARCHAR(30), IN `given_add` TEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `contact`
+SET content	 = givenText,
+contact_num = co_no,
+email = email_add,
+address = given_add
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateCounseling` (IN `givenText` LONGTEXT, IN `head` VARCHAR(255), IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
 set is_done =  0;
 
@@ -461,6 +619,31 @@ set is_done =  0;
 
 UPDATE `home`
 SET content	 = givenText
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateOption` (IN `opt` TEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `options`
+SET options	 = opt,
+question_id = text_id
+WHERE id = text_id;
+
+IF Row_Count() > 0 THEN
+	set is_done = 1;
+end IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateQuestionnaire` (IN `givenText` LONGTEXT, IN `text_id` INT(11), OUT `is_done` TINYINT(4))  BEGIN
+set is_done =  0;
+
+UPDATE `questionnaire`
+SET question = givenText
 WHERE id = text_id;
 
 IF Row_Count() > 0 THEN
@@ -591,6 +774,13 @@ CREATE TABLE `add_terms` (
   `content` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `add_terms`
+--
+
+INSERT INTO `add_terms` (`id`, `content`) VALUES
+(1, '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet</p>');
+
 -- --------------------------------------------------------
 
 --
@@ -609,6 +799,27 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `email`, `password`) VALUES
 (1, 'admin@gmail.com', '741852');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `answers`
+--
+
+CREATE TABLE `answers` (
+  `id` int(11) NOT NULL,
+  `answer` text NOT NULL,
+  `form_submitted_date` date NOT NULL DEFAULT current_timestamp(),
+  `user_name` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `answers`
+--
+
+INSERT INTO `answers` (`id`, `answer`, `form_submitted_date`, `user_name`) VALUES
+(1, '{\"Question 1\":{\"Question\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry\",\"Answer\":\"Yes\"},\"Question 2\":{\"Question\":\"what is your name \",\"Answer\":\"Natuto\"},\"Question 3\":{\"Question\":\"how are you ??\",\"Answer\":\"Fine\"},\"Question 4\":{\"Question\":\"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised\",\"Answer\":\"randomised\"},\"Question 5\":{\"Question\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s\",\"Answer\":\"dummy text\"}}', '2023-05-18', 'minato@gmail.com'),
+(2, '{\"Question 1\":{\"Question\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry\",\"Answer\":\"Yes\"},\"Question 2\":{\"Question\":\"what is your name \",\"Answer\":\"Natuto\"},\"Question 3\":{\"Question\":\"how are you ??\",\"Answer\":\"Fine\"},\"Question 4\":{\"Question\":\"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised\",\"Answer\":\"randomised\"},\"Question 5\":{\"Question\":\"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s\",\"Answer\":\"dummy text\"}}', '2023-05-18', 'kushina@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -664,12 +875,12 @@ CREATE TABLE `career_articles` (
 --
 
 INSERT INTO `career_articles` (`id`, `image`, `heading`, `content`) VALUES
-(7, '1684221513_img.jpg', 'test heading ', '<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,</p>'),
-(8, '1684221568_img.jpg', 'established fact that a reader', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now</p>'),
-(9, '1684221630_img.jpg', 'testt', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now&nbsp;</p>'),
-(10, '1684221646_img.jpg', 'testt gg', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha<strong>s a more-or-le</strong>ss normal distribution of letters, as opposed t o using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now&nbsp;</p>'),
-(11, '1684221659_img.jpg', ' fdf dffd  45544343434', '<p>It is a long established fact that<i> a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha<strong>s a more-or-le</strong>ss normal distribution of letters, as opposed t o using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now &nbsp;dfd fd 3434 343434&nbsp;</i></p>'),
-(12, '1684224659_img.jpg', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old', '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text.</p>');
+(8, '1684239111_img.jpg', 'established fact that a reader', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now</p>'),
+(9, '1684239145_img.jpg', 'Many desktop publishing packages and web page editors now ', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now </p>'),
+(10, '1684239191_img.jpg', 'distracted by the readable content of a page when looking at its layout', '<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha<strong>s a more-or-le</strong>ss normal distribution of letters, as opposed t o using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now </p>'),
+(11, '1684239239_img.jpg', 'distracted by the readable content', '<p>It is a long established fact that<i> a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it ha<strong>s a more-or-le</strong>ss normal distribution of letters, as opposed t o using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now  dfd fd 3434 343434 </i></p>'),
+(12, '1684239283_img.jpg', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old', '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text.</p>'),
+(13, '1684300586_img.jpg', 'unknown printer took a galley ', '<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>');
 
 -- --------------------------------------------------------
 
@@ -689,7 +900,7 @@ CREATE TABLE `career_guidence` (
 --
 
 INSERT INTO `career_guidence` (`id`, `content`, `image`, `image2`) VALUES
-(1, '<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>', '1683281894_img.jpg', '1683281894_img2.jpg');
+(1, '<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.&nbsp;</p>', '1684238815_img.jpg', '1684238815_img2.jpg');
 
 -- --------------------------------------------------------
 
@@ -720,6 +931,56 @@ CREATE TABLE `career_journey` (
 
 INSERT INTO `career_journey` (`id`, `content`) VALUES
 (1, '<p>Lorem ipsum dolo<strong>r sit amet consectetur adipisicing elit</strong>. Quos aperiam, saepe quaerat ipsum sed esse, est perferendis blanditiis sapiente vel asperiores facere ea expedita soluta nostrum magnam eligendi quis quas?Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui, consequuntur debitis voluptatum quis recusandae exercitationem ex obcaecati natus fugit ratione aliquid doloremque aliquam quo, tenetur sint officiis esse,&nbsp;</p>');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contact`
+--
+
+CREATE TABLE `contact` (
+  `id` int(11) NOT NULL,
+  `content` longtext NOT NULL,
+  `contact_num` bigint(15) NOT NULL,
+  `email` varchar(20) NOT NULL,
+  `address` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `contact`
+--
+
+INSERT INTO `contact` (`id`, `content`, `contact_num`, `email`, `address`) VALUES
+(1, '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus. In hendrerit gravida rutrum quisque non tellus. Morbi tristique senectus et netus et malesuada fames. Suscipit tellus mauris a diam maecenas sed. Phasellus faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis. Amet consectetur adipiscing elit ut. Etiam tempor orci eu lobortis. Purus faucibus ornare suspendisse sed.</p>', 8596895556, 'abcd123@gmail.com', 'Etiam tempor orci eu lobortis. Purus faucibus ornare suspendisse sed.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contact_form`
+--
+
+CREATE TABLE `contact_form` (
+  `id` int(11) NOT NULL,
+  `user_name` varchar(30) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `message` text NOT NULL,
+  `form_submitted_date` date DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `contact_form`
+--
+
+INSERT INTO `contact_form` (`id`, `user_name`, `email`, `message`, `form_submitted_date`) VALUES
+(1, 'kakashi', 'kakskl', 'dfddkfdlkd', '2023-05-17'),
+(2, 'itachi', 'itachi@gmail.com', 'dfjkdjfk', '2023-05-17'),
+(3, 'kakashi', 'kakashi@gmail.com', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus.', '2023-05-17'),
+(4, 'itachi', 'itachi@gmail.com', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus.', '2023-05-17'),
+(5, 'obito', 'obito@gmail.com', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus.', '2023-05-17'),
+(6, 'hinata', 'hinata@gmail.com', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus.', '2023-05-17'),
+(7, 'honey', 'honey', 'honey', '2023-05-17'),
+(8, 'sakura', 'sakura@gmail.com', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sociis natoque penatibus et magnis dis parturient montes. At augue eget arcu dictum varius duis. Libero justo laoreet sit amet cursus. Netus et malesuada fames ac turpis egestas sed tempus.', '2023-05-17'),
+(9, '', '', '', '2023-05-18');
 
 -- --------------------------------------------------------
 
@@ -756,10 +1017,10 @@ CREATE TABLE `education_logo` (
 --
 
 INSERT INTO `education_logo` (`id`, `image`) VALUES
-(1, '16841337970.jpg'),
-(2, '16841337971.jpg'),
-(3, '16841337972.jpg'),
-(4, '16841337973.jpg');
+(1, '16842389170.png'),
+(2, '16842389171.png'),
+(3, '16842389370.png'),
+(4, '16842389371.png');
 
 -- --------------------------------------------------------
 
@@ -782,6 +1043,29 @@ INSERT INTO `home` (`id`, `content`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `options`
+--
+
+CREATE TABLE `options` (
+  `id` int(11) NOT NULL,
+  `options` text NOT NULL,
+  `question_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `options`
+--
+
+INSERT INTO `options` (`id`, `options`, `question_id`) VALUES
+(1, 'Yes, No', 1),
+(2, 'Natuto, luffy', 2),
+(3, 'Fine, bad', 3),
+(4, 'randomised, passages, variations', 4),
+(8, 'dummy text, typesetting', 8);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `our_team`
 --
 
@@ -796,10 +1080,32 @@ CREATE TABLE `our_team` (
 --
 
 INSERT INTO `our_team` (`id`, `image`, `teacher_name`) VALUES
-(2, '1684141599_img.jpg', 'John Smith'),
-(3, '1684141620_img.jpg', 'Jerry Nohara'),
-(4, '1684141668_img.jpg', 'Cristine Shaw'),
-(5, '1684141708_img.jpg', 'Roman Tears');
+(2, '1684238978_img.jpg', 'John Smith'),
+(3, '1684238997_img.jpg', 'Jerry Nohara'),
+(4, '1684239013_img.jpg', 'Cristine Shaw'),
+(5, '1684239041_img.jpg', 'Roman Tears');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `questionnaire`
+--
+
+CREATE TABLE `questionnaire` (
+  `id` int(11) NOT NULL,
+  `question` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `questionnaire`
+--
+
+INSERT INTO `questionnaire` (`id`, `question`) VALUES
+(1, '<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>'),
+(2, '<p>what is your name&nbsp;</p>'),
+(3, '<p>how are you ??</p>'),
+(4, '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised</p>'),
+(8, '<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s</p>');
 
 -- --------------------------------------------------------
 
@@ -842,6 +1148,31 @@ INSERT INTO `survey` (`id`, `content`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `survey_form`
+--
+
+CREATE TABLE `survey_form` (
+  `id` int(11) NOT NULL,
+  `first_name` varchar(20) NOT NULL,
+  `last_name` varchar(20) NOT NULL,
+  `email` varchar(20) NOT NULL,
+  `date_of_birth` date NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `grade` varchar(30) NOT NULL,
+  `submitted_date` date NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `survey_form`
+--
+
+INSERT INTO `survey_form` (`id`, `first_name`, `last_name`, `email`, `date_of_birth`, `gender`, `grade`, `submitted_date`) VALUES
+(1, 'minato', 'namikaze', 'minato@gmail.com', '2023-05-30', 'male', 'A', '2023-05-18'),
+(2, 'kushina', 'uzumaki', 'kushina@gmail.com', '2023-06-10', 'female', 'A', '2023-05-18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `terms`
 --
 
@@ -849,6 +1180,13 @@ CREATE TABLE `terms` (
   `id` int(11) NOT NULL,
   `content` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `terms`
+--
+
+INSERT INTO `terms` (`id`, `content`) VALUES
+(1, '<p><strong>Contrary to popular belief,</strong> Lorem <i>Ipsum </i>is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>');
 
 -- --------------------------------------------------------
 
@@ -861,6 +1199,16 @@ CREATE TABLE `terms_condition` (
   `heading` text NOT NULL,
   `content` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `terms_condition`
+--
+
+INSERT INTO `terms_condition` (`id`, `heading`, `content`) VALUES
+(2, 'There are many variations of passages of L orem Ipsum available, but the majorit', '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet</p>'),
+(9, 'There are many variations of passages', '<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</p>'),
+(16, ' Personal Financial Advisor', '<p>Praesent nec ex a justo ultrices iaculis a bibendum erat. Integer neque ante, volutpat vitae consequat ut, tempor et nisl. Quisque lobortis justo a enim luctus feugiat. Nam ullamcorper efficitur nulla. Mauris massa nibh, ornare non nibh non, porttitor auctor leo. Duis gravida finibus sodales. Nam eu ante at lectus vehicula blandit a sed sem.Praesent nec ex a justo ultrices iaculis a bibendum erat. Integer neque ante, volutpat vitae consequat ut, tempor et nisl. Quisque lobortis justo a enim luctus feugiat. Nam ullamcorper efficitur nulla.s sodales. Nam eu ante at lectus vehicula blandit a sed sem. Praesent nec ex a justo ultrices iaculis a bibendum erat. Integer neque ante, volutpat vitae consequat ut, tempor et nisl. Quisque lobortis justo a enim luctus feugiat. Nam ullamcorper efficitur nulla. Mauris massa nibh, ornare non nibh non, porttitor auctor leo. Duis gravida finibus sodales. Nam eu ante at lectus vehicula blandit a sed sem.Praesent nec ex a justo ultrices iaculis a bibendum erat. Integer neque ante, volutpat vitae consequat ut, tempor et nisl. Quisque lobortis justo a enim luctus feugiat. Nam ullamcorper efficitur nulla.s sodales. Nam eu ante at lectus vehicula blandit a sed sem.</p>'),
+(17, 'Latine', '<p>hi</p>');
 
 --
 -- Indexes for dumped tables
@@ -888,6 +1236,12 @@ ALTER TABLE `add_terms`
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `answers`
+--
+ALTER TABLE `answers`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -927,6 +1281,18 @@ ALTER TABLE `career_journey`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `contact`
+--
+ALTER TABLE `contact`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `contact_form`
+--
+ALTER TABLE `contact_form`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `counseling`
 --
 ALTER TABLE `counseling`
@@ -945,9 +1311,22 @@ ALTER TABLE `home`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `options`
+--
+ALTER TABLE `options`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `option_fk` (`question_id`);
+
+--
 -- Indexes for table `our_team`
 --
 ALTER TABLE `our_team`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `questionnaire`
+--
+ALTER TABLE `questionnaire`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -960,6 +1339,12 @@ ALTER TABLE `success_stories`
 -- Indexes for table `survey`
 --
 ALTER TABLE `survey`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `survey_form`
+--
+ALTER TABLE `survey_form`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -994,13 +1379,19 @@ ALTER TABLE `about_main`
 -- AUTO_INCREMENT for table `add_terms`
 --
 ALTER TABLE `add_terms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `answers`
+--
+ALTER TABLE `answers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `blog`
@@ -1018,7 +1409,7 @@ ALTER TABLE `blogInner`
 -- AUTO_INCREMENT for table `career_articles`
 --
 ALTER TABLE `career_articles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `career_guidence`
@@ -1039,6 +1430,18 @@ ALTER TABLE `career_journey`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `contact`
+--
+ALTER TABLE `contact`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `contact_form`
+--
+ALTER TABLE `contact_form`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
 -- AUTO_INCREMENT for table `counseling`
 --
 ALTER TABLE `counseling`
@@ -1057,10 +1460,22 @@ ALTER TABLE `home`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `options`
+--
+ALTER TABLE `options`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `our_team`
 --
 ALTER TABLE `our_team`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `questionnaire`
+--
+ALTER TABLE `questionnaire`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `success_stories`
@@ -1075,16 +1490,32 @@ ALTER TABLE `survey`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `survey_form`
+--
+ALTER TABLE `survey_form`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `terms`
 --
 ALTER TABLE `terms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `terms_condition`
 --
 ALTER TABLE `terms_condition`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `options`
+--
+ALTER TABLE `options`
+  ADD CONSTRAINT `option_fk` FOREIGN KEY (`question_id`) REFERENCES `questionnaire` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
