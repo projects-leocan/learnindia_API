@@ -294,6 +294,39 @@ $app->post('/addEducationLogo',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->post('/updateEducationLogo',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('id'));   
+        if($result == null){
+
+                $id = $request->getParam('id');
+                $is_image_set = false;
+                $photos = null;
+
+                if (isset($_FILES['image'])) {
+                        $is_image_set = true;
+                        $photos = $_FILES['image'];
+                } else {
+                        $is_image_set = true;
+                        $photos = $_FILES['image'];
+                }
+                        $db = new DbHandler();
+                        $result = $db->updateEducationLogo($id,$photos, $is_image_set);
+                }
+        return $response->withJson($result);
+        
+});
+
+
+$app->post('/deleteEducationLogo',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('logo_id'));   
+        if($result == null){
+                $db = new DbHandler();
+                $logo_id = $request->getParam('logo_id');
+                $result = $db->deleteEducationLogo($logo_id);
+        }
+        return $response->withJson($result);
+});
+
 $app->get('/fetchEducationLogo',function($request, $response, $args) use ($app) {      
         $db = new DbHandler();
         $result = $db->fetchEducationLogo();
@@ -757,4 +790,3 @@ $app->post('/fetchAnswers',function($request, $response, $args) use ($app) {
 });
 
 $app->run();
-?>

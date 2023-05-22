@@ -805,7 +805,7 @@ class DbHandler {
         $response = array();
 
         while($record = $res->fetch_assoc()){
-            $response = $record;
+            $response[] = $record;
         }
 
         $stmt->close();
@@ -1408,20 +1408,91 @@ class DbHandler {
                     $stmt1 = $this->conn->query($sql_query);
                     $result = array(
                         'success' => true,
-                        'message' => 'Education Logo Added Sucessfully'
+                        'Message' => 'Education Logo Added Sucessfully'
 
                     );
                 } else {
                     $result = array(
                         'success' => true,
-                        'message' => 'Failed to Add Education Logo '
+                        'Message' => 'Failed to Add Education Logo '
                     );
                 }
             }
         } else {
             $result = array(
                 'success' => false,
-                'message' => 'No Images Selected '
+                'Message' => 'No Images Selected '
+            );
+        }
+        return $result;
+    }
+
+    public function updateEducationLogo($id,$photos, $is_photo_set)
+    {
+        if ($is_photo_set) {
+            if (!file_exists($this->image_path3)) {
+                mkdir($this->image_path3, 0777, true);
+            }
+
+            $count = count($photos["name"]);
+
+            for ($i = 0; $i < $count; $i++) {
+                $extension = pathinfo($photos['name'][$i], PATHINFO_EXTENSION);
+                $filename = time() . $i . '.' . $extension;
+                $file = $this->image_path3 . $filename;
+
+
+                if (move_uploaded_file($photos['tmp_name'][$i], $file)) {
+                    $sql_query = "UPDATE `education_logo` SET `image` = '$filename' WHERE id = $id";
+                    $stmt1 = $this->conn->query($sql_query);
+                    $result = array(
+                        'success' => true,
+                        'Message' => 'Education Logo updated Sucessfully'
+
+                    );
+                } else {
+                    $result = array(
+                        'success' => true,
+                        'Message' => 'Failed to update Education Logo '
+                    );
+                }
+            }
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => 'No Images Selected '
+            );
+        }
+        return $result;
+    }
+
+    public function deleteEducationLogo($id)
+    {
+        $sql_query="CALL deleteEducationLogo(?,@is_done)";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i',$id);
+        $stmt->execute();
+        $stmt->close();
+        
+        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+        $stmt1->execute();
+        $stmt1->bind_result($is_done);       
+        $stmt1->fetch();
+        $stmt1->close();
+            
+        if ($is_done) {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Education Logo Deleted Successfully",
+                'Status'=> "Success"
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to Delete Education Logo",
+                'Status'=> "Error"
             );
         }
         return $result;
