@@ -737,12 +737,11 @@ $app->post('/deleteServeyResponse',function($request, $response, $args) use ($ap
 });
 
 $app->post('/storeAnswers',function($request, $response, $args) use ($app) {   
-        $result = verifyRequiredParams(array('answer','user_name'));   
+        $result = verifyRequiredParams(array('answer'));   
         if($result == null){
                 $db = new DbHandler();
                 $answer = $request->getParam('answer');
-                $user_name = $request->getParam('user_name');
-                $result = $db->storeAnswers($answer,$user_name);
+                $result = $db->storeAnswers($answer);
         }
         return $response->withJson($result);
 });

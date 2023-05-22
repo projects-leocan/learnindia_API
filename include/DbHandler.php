@@ -2136,37 +2136,83 @@ class DbHandler {
         return $result;
     }
 
-    public function storeAnswers($answer,$user_name)
-    {
-        $sql_query="CALL storeAnswers(?,?,@is_done)";
-        $stmt = $this->conn->prepare($sql_query);
-        $stmt->bind_param('ss', $answer,$user_name);
-        $stmt->execute();
-        $stmt->close();
+    // public function storeAnswers($answer,$question_id,$answer_id,$user_name)
+    // {
+    //     $sql_query="CALL storeAnswers(?,?,@is_done)";
+    //     $stmt = $this->conn->prepare($sql_query);
+    //     $stmt->bind_param('ss', $answer,$user_name);
+    //     $stmt->execute();
+    //     $stmt->close();
                 
-        $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
-        $stmt1->execute();
-        $stmt1->bind_result($is_done);       
-        $stmt1->fetch();
-        $stmt1->close();
+    //     $stmt1 = $this->conn->prepare("SELECT @is_done AS is_done");
+    //     $stmt1->execute();
+    //     $stmt1->bind_result($is_done);       
+    //     $stmt1->fetch();
+    //     $stmt1->close();
             
-        if ($is_done) {
-            $result=array(
-                'success'=>true,
-                'Message'=> "Form filled successfully",
-                'Status'=> "Success"
+    //     if ($is_done) {
+    //         $result=array(
+    //             'success'=>true,
+    //             'Message'=> "Form filled successfully",
+    //             'Status'=> "Success"
+    //         );
+    //     }
+    //     else
+    //     {
+    //         $result=array(
+    //             'success'=>false,
+    //             'Message'=> "Failed to fill form",
+    //             'Status'=> "Error"
+    //         );
+    //     }
+    //     return $result;
+    // }
+
+    public function storeAnswers($data)
+    {
+        $decodedData = json_decode($data, true);
+        var_dump($decodedData);
+    
+        $sql_query = "INSERT INTO answers (`answer`, `user_name`, `question_id`, `option_id`) VALUES ";
+    
+        $query_parts = array();
+        foreach ($decodedData as $question) {
+            $question_id = $question['question_id'];
+    
+            foreach ($question['answers'] as $answer) {
+                $option_id = $answer['option_id'];
+                $answer_value = $answer['answer'];
+                $user_name = $answer['user_name'];
+    
+                $query_parts[] = "('" . $answer_value . "', '" . $user_name . "', '" . $question_id . "', '" . $option_id . "')";
+            }
+        }
+    
+        $sql_query .= implode(',', $query_parts);
+    
+        try {
+            if (mysqli_query($this->conn, $sql_query)) {
+                $result = array(
+                    'success' => true,
+                    'query' => $sql_query,
+                    'message' => 'answers submitted successfully',
+                );
+            } else {
+                $result = array(
+                    'success' => false,
+                    'message' => 'something went wrong',
+                );
+            }
+        } catch (Exception $e) {
+            $result = array(
+                'success' => false,
+                'message' => 'please fill the form',
             );
         }
-        else
-        {
-            $result=array(
-                'success'=>false,
-                'Message'=> "Failed to fill form",
-                'Status'=> "Error"
-            );
-        }
+    
         return $result;
     }
+    
 
     // ================ TERMS & CONDITONS SECTION  ==============================
 
