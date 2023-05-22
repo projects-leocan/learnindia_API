@@ -718,6 +718,40 @@ class DbHandler {
     }
 
 
+    public function fetchQuestions()
+    {
+        $sql_query="CALL fetchQuestions()"; 
+        $stmt = $this->conn->query($sql_query); 
+        $this->conn->next_result();           
+        $response = array();
+        while ( $row = $stmt->fetch_assoc()) {     
+            $response[] = $row;
+        }
+
+        $stmt->close();
+
+        if (count($response)>0)
+        {
+            $result=array(
+                'success'=>true,
+                'Message'=> "Content fetched successfully",
+                'Status'=> "Success",
+                'Response'=>$response
+            );
+        }
+        else
+        {
+            $result=array(
+                'success'=>false,
+                'Message'=> "Failed to fetch Content",
+                'Status'=> "Error"
+            );
+        }
+        return $result;
+    }
+
+
+
     public function fetchQuestionnaire($page_number,$page_size)
     {
         $sql_query="CALL fetchQuestionnaire(?,?,@totalQuestions)";    

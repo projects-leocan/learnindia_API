@@ -736,6 +736,12 @@ $app->post('/fetchQuestionnaire',function($request, $response, $args) use ($app)
         return $response->withJson($result);
 });
 
+$app->get('/fetchQuestions',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchQuestions();
+        return $response->withJson($result);
+});
+
 
 
 $app->post('/fillServeyForm',function($request, $response, $args) use ($app) {   
