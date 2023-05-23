@@ -2276,7 +2276,6 @@ class DbHandler {
     public function storeAnswers($data)
     {
         $decodedData = json_decode($data, true);
-        var_dump($decodedData);
     
         $sql_query = "INSERT INTO answers (`answer`, `user_name`, `question_id`, `option_id`) VALUES ";
     
@@ -2299,19 +2298,21 @@ class DbHandler {
             if (mysqli_query($this->conn, $sql_query)) {
                 $result = array(
                     'success' => true,
-                    'query' => $sql_query,
-                    'message' => 'answers submitted successfully',
+                    'Message' => 'answers submitted successfully',
+                    'Status'=> "Success"
                 );
             } else {
                 $result = array(
                     'success' => false,
-                    'message' => 'something went wrong',
+                    'Message' => 'something went wrong',
+                    'Status'=> "Error"
                 );
             }
         } catch (Exception $e) {
             $result = array(
                 'success' => false,
-                'message' => 'please fill the form',
+                'Message' => 'please fill the form',
+                'Status'=> "Error"
             );
         }
     
