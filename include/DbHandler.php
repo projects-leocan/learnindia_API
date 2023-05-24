@@ -1893,7 +1893,7 @@ class DbHandler {
                     $stmt2 = $this->conn->query(" UPDATE career_articles SET image = '$filename'  WHERE id = $content_id");
                     $result = array(
                         'success'=>true,
-                        'Message'=> "Content added successfully ",
+                        'Message'=> "Content updated successfully ",
                         'Status'=> "Success"
                         
                     );
@@ -1901,7 +1901,7 @@ class DbHandler {
                 } else {
                     $result = array(
                         'success' => true,
-                        'Message' => 'Content added successfully . but images are not uploaded due to some issues ',
+                        'Message' => 'Content Updated successfully . but images are not uploaded due to some issues ',
                         'Status'=> "Success"
                 
                     );
@@ -1909,7 +1909,7 @@ class DbHandler {
             } else {
                 $result = array(
                     'success' => true,
-                    'Message'=> "Content added successfully . but images are not uploaded due to some issues ",
+                    'Message'=> "Content updated successfully . but images are not uploaded due to some issues ",
                     'Status'=> "Success"
                 );
             }
