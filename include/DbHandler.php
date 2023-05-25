@@ -461,37 +461,79 @@ class DbHandler {
         return $result;
     }
 
+    // public function fetchblogInnerContent()
+    // {
+    //     $sql_query="CALL fetchblogInnerContent()"; 
+    //     $stmt = $this->conn->query($sql_query); 
+    //     $this->conn->next_result();           
+    //     $response = array();
+    //     while ( $row = $stmt->fetch_assoc()) {     
+    //         $response = $row;
+    //     }
+
+    //     $stmt->close();
+
+    //     if (count($response)>0)
+    //     {
+    //         $result=array(
+    //             'success'=>true,
+    //             'Message'=> "Content fetched successfully",
+    //             'Status'=> "Success",
+    //             'Response'=>$response
+    //         );
+    //     }
+    //     else
+    //     {
+    //         $result=array(
+    //             'success'=>false,
+    //             'Message'=> "Failed to fetch Content",
+    //             'Status'=> "Error"
+    //         );
+    //     }
+    //     return $result;
+    // }
+
     public function fetchblogInnerContent()
-    {
-        $sql_query="CALL fetchblogInnerContent()"; 
-        $stmt = $this->conn->query($sql_query); 
-        $this->conn->next_result();           
-        $response = array();
-        while ( $row = $stmt->fetch_assoc()) {     
-            $response = $row;
-        }
-
-        $stmt->close();
-
-        if (count($response)>0)
-        {
-            $result=array(
-                'success'=>true,
-                'Message'=> "Content fetched successfully",
-                'Status'=> "Success",
-                'Response'=>$response
-            );
-        }
-        else
-        {
-            $result=array(
-                'success'=>false,
-                'Message'=> "Failed to fetch Content",
-                'Status'=> "Error"
-            );
-        }
+{
+    $sql_query = "CALL fetchblogInnerContent()";
+    
+    // Execute the query
+    $stmt = $this->conn->query($sql_query);
+    
+    // Check for query error
+    if (!$stmt) {
+        $result = array(
+            'success' => false,
+            'Message' => "Query error: " . $this->conn->error,
+            'Status' => "Error"
+        );
         return $result;
     }
+    
+    // Check for empty result set
+    if ($stmt->num_rows > 0) {
+        $response = $stmt->fetch_assoc();
+    } else {
+        $result = array(
+            'success' => false,
+            'Message' => "Failed to fetch Content",
+            'Status' => "Error"
+        );
+        return $result;
+    }
+    
+    $stmt->close();
+    
+    $result = array(
+        'success' => true,
+        'Message' => "Content fetched successfully",
+        'Status' => "Success",
+        'Response' => $response
+    );
+    
+    return $result;
+}
+
 
     public function fetchCareerArticles()
     {
