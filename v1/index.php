@@ -805,4 +805,10 @@ $app->post('/fetchAnswers',function($request, $response, $args) use ($app) {
         return $response->withJson($result);
 });
 
+$app->get('/fetchCombinedContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchCombinedContent();
+        return $response->withJson($result);
+});
+
 $app->run();

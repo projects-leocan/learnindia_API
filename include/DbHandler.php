@@ -301,6 +301,81 @@ class DbHandler {
         return $result;
     }
 
+    // combine all response API 
+    public function fetchCombinedContent()
+    {
+        $response = array();
+
+        // Fetch data from the first table
+        $sql_query = "SELECT * FROM `home`";
+        $result = $this->conn->query($sql_query);
+        $table1Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table1Response[] = $row;
+        }
+        if (count($table1Response) > 0) {
+            $response['home'] = $table1Response;
+        }
+
+        $sql_query = "SELECT * FROM `career_guidence`";
+        $result = $this->conn->query($sql_query);
+        $table2Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table2Response[] = $row;
+        }
+        if (count($table2Response) > 0) {
+            $response['career_guidance'] = $table2Response;
+        }
+
+        $sql_query = "SELECT * FROM `career_journey`";
+        $result = $this->conn->query($sql_query);
+        $table3Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table3Response[] = $row;
+        }
+        if (count($table3Response) > 0) {
+            $response['career_journey'] = $table3Response;
+        }
+
+        $sql_query = "SELECT * FROM `counseling`";
+        $result = $this->conn->query($sql_query);
+        $table4Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table4Response[] = $row;
+        }
+        if (count($table4Response) > 0) {
+            $response['counseling'] = $table4Response;
+        }
+
+        $sql_query = "SELECT * FROM `success_stories`";
+        $result = $this->conn->query($sql_query);
+        $table5Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table5Response[] = $row;
+        }
+        if (count($table5Response) > 0) {
+            $response['success_stories'] = $table5Response;
+        }
+
+
+        if (count($response) > 0) {
+            $result = array(
+                'success' => true,
+                'Message' => "Content fetched successfully",
+                'Status' => "Success",
+                'Response' => $response
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to fetch Content",
+                'Status' => "Error"
+            );
+        }
+
+        return $result;
+    }
+
     public function fetchAbout()
     {
         $sql_query="CALL fetchAbout()"; 
