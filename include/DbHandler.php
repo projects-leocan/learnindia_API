@@ -856,6 +856,60 @@ class DbHandler {
         return $result;
     }
 
+    // combine all T&C Section response
+    public function fetchTermsCombinedContent()
+    {
+        $response = array();
+
+        // Fetch data from the first table
+        $sql_query = "SELECT * FROM `terms`";
+        $result = $this->conn->query($sql_query);
+        $table1Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table1Response[] = $row;
+        }
+        if (count($table1Response) > 0) {
+            $response['terms'] = $table1Response;
+        }
+
+        $sql_query = "SELECT * FROM `terms_condition`";
+        $result = $this->conn->query($sql_query);
+        $table2Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table2Response[] = $row;
+        }
+        if (count($table2Response) > 0) {
+            $response['terms_condition'] = $table2Response;
+        }
+
+        $sql_query = "SELECT * FROM `add_terms`";
+        $result = $this->conn->query($sql_query);
+        $table3Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table3Response[] = $row;
+        }
+        if (count($table3Response) > 0) {
+            $response['add_terms'] = $table3Response;
+        }
+
+        if (count($response) > 0) {
+            $result = array(
+                'success' => true,
+                'Message' => "Content fetched successfully",
+                'Status' => "Success",
+                'Response' => $response
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to fetch Content",
+                'Status' => "Error"
+            );
+        }
+
+        return $result;
+    }
+
     public function fetchContact()
     {
         $sql_query="CALL fetchContact()"; 

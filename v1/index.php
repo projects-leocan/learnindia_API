@@ -823,4 +823,10 @@ $app->get('/fetchBlogCombinedContent',function($request, $response, $args) use (
         return $response->withJson($result);
 });
 
+$app->get('/fetchTermsCombinedContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchTermsCombinedContent();
+        return $response->withJson($result);
+});
+
 $app->run();
