@@ -817,4 +817,10 @@ $app->get('/fetchAboutCombinedContent',function($request, $response, $args) use 
         return $response->withJson($result);
 });
 
+$app->get('/fetchBlogCombinedContent',function($request, $response, $args) use ($app) {      
+        $db = new DbHandler();
+        $result = $db->fetchBlogCombinedContent();
+        return $response->withJson($result);
+});
+
 $app->run();

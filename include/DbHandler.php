@@ -602,46 +602,45 @@ class DbHandler {
     }
 
     public function fetchblogInnerContent()
-{
-    $sql_query = "CALL fetchblogInnerContent()";
-    
-    // Execute the query
-    $stmt = $this->conn->query($sql_query);
-    
-    // Check for query error
-    if (!$stmt) {
-        $result = array(
-            'success' => false,
-            'Message' => "Query error: " . $this->conn->error,
-            'Status' => "Error"
-        );
-        return $result;
-    }
-    
-    // Check for empty result set
-    if ($stmt->num_rows > 0) {
-        $response = $stmt->fetch_assoc();
-    } else {
-        $result = array(
-            'success' => false,
-            'Message' => "Failed to fetch Content",
-            'Status' => "Error"
-        );
-        return $result;
-    }
-    
-    $stmt->close();
-    
-    $result = array(
-        'success' => true,
-        'Message' => "Content fetched successfully",
-        'Status' => "Success",
-        'Response' => $response
-    );
-    
-    return $result;
-}
+    {
+        $sql_query = "CALL fetchblogInnerContent()";
 
+        // Execute the query
+        $stmt = $this->conn->query($sql_query);
+
+        // Check for query error
+        if (!$stmt) {
+            $result = array(
+                'success' => false,
+                'Message' => "Query error: " . $this->conn->error,
+                'Status' => "Error"
+            );
+            return $result;
+        }
+
+        // Check for empty result set
+        if ($stmt->num_rows > 0) {
+            $response = $stmt->fetch_assoc();
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to fetch Content",
+                'Status' => "Error"
+            );
+            return $result;
+        }
+
+        $stmt->close();
+
+        $result = array(
+            'success' => true,
+            'Message' => "Content fetched successfully",
+            'Status' => "Success",
+            'Response' => $response
+        );
+
+        return $result;
+    }
 
     public function fetchCareerArticles()
     {
@@ -672,6 +671,60 @@ class DbHandler {
                 'Status'=> "Error"
             );
         }
+        return $result;
+    }
+
+    // combine all Blog Section response
+    public function fetchBlogCombinedContent()
+    {
+        $response = array();
+
+        // Fetch data from the first table
+        $sql_query = "SELECT * FROM `blog`";
+        $result = $this->conn->query($sql_query);
+        $table1Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table1Response[] = $row;
+        }
+        if (count($table1Response) > 0) {
+            $response['blog'] = $table1Response;
+        }
+
+        $sql_query = "SELECT * FROM `bloginner`;";
+        $result = $this->conn->query($sql_query);
+        $table2Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table2Response[] = $row;
+        }
+        if (count($table2Response) > 0) {
+            $response['bloginner'] = $table2Response;
+        }
+
+        $sql_query = "SELECT * FROM `career_articles`";
+        $result = $this->conn->query($sql_query);
+        $table3Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table3Response[] = $row;
+        }
+        if (count($table3Response) > 0) {
+            $response['career_articles'] = $table3Response;
+        }
+
+        if (count($response) > 0) {
+            $result = array(
+                'success' => true,
+                'Message' => "Content fetched successfully",
+                'Status' => "Success",
+                'Response' => $response
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to fetch Content",
+                'Status' => "Error"
+            );
+        }
+
         return $result;
     }
 
@@ -867,7 +920,6 @@ class DbHandler {
         return $result;
     }
 
-
     public function fetchQuestions()
     {
         $sql_query="CALL fetchQuestions()"; 
@@ -899,8 +951,6 @@ class DbHandler {
         }
         return $result;
     }
-
-
 
     public function fetchQuestionnaire($page_number,$page_size)
     {
