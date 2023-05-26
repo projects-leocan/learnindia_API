@@ -216,6 +216,16 @@ $app->post('/updateSuccessStory',function($request, $response, $args) use ($app)
         return $response->withJson($result);
 });
 
+$app->post('/deleteSuccessStory',function($request, $response, $args) use ($app) {   
+        $result = verifyRequiredParams(array('content_id'));    
+        if($result == null){
+                $db = new DbHandler();
+                $content_id = $request->getParam('content_id');
+                $result = $db->deleteSuccessStory($content_id);
+        }
+        return $response->withJson($result);
+});
+
 $app->get('/fetchSuccessStory',function($request, $response, $args) use ($app) {      
         $db = new DbHandler();
         $result = $db->fetchSuccessStory();

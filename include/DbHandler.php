@@ -1332,6 +1332,36 @@ class DbHandler {
         return $result;
     }
 
+    public function deleteSuccessStory($id)
+    {
+        $sql_query = "DELETE FROM `success_stories` WHERE id = ?";
+        $stmt = $this->conn->prepare($sql_query);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+        
+        if ($affectedRows > 0) {
+            $is_done = 1;
+            $result = array(
+                'success' => true,
+                'Message' => "Content Deleted Successfully",
+                'Status' => "Success"
+            );
+        } else {
+            $is_done = 0;
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to Delete Content",
+                'Status' => "Error"
+            );
+        }
+        
+        // $result['is_done'] = $is_done;
+        return $result;
+    }
+    
+
     // ================ ABOUT US SECTION ==============================
 
     public function addAbout($content)
