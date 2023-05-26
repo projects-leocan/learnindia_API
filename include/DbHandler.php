@@ -301,7 +301,7 @@ class DbHandler {
         return $result;
     }
 
-    // combine all response API 
+    // combine all HOME Section response
     public function fetchCombinedContent()
     {
         $response = array();
@@ -357,6 +357,71 @@ class DbHandler {
             $response['success_stories'] = $table5Response;
         }
 
+
+        if (count($response) > 0) {
+            $result = array(
+                'success' => true,
+                'Message' => "Content fetched successfully",
+                'Status' => "Success",
+                'Response' => $response
+            );
+        } else {
+            $result = array(
+                'success' => false,
+                'Message' => "Failed to fetch Content",
+                'Status' => "Error"
+            );
+        }
+
+        return $result;
+    }
+
+    // combine all About Section response
+
+    public function fetchAboutCombinedContent()
+    {
+        $response = array();
+
+        // Fetch data from the first table
+        $sql_query = "SELECT * FROM `about_main`";
+        $result = $this->conn->query($sql_query);
+        $table1Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table1Response[] = $row;
+        }
+        if (count($table1Response) > 0) {
+            $response['about_main'] = $table1Response;
+        }
+
+        $sql_query = "SELECT * FROM `about_inner`";
+        $result = $this->conn->query($sql_query);
+        $table2Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table2Response[] = $row;
+        }
+        if (count($table2Response) > 0) {
+            $response['about_inner'] = $table2Response;
+        }
+
+        $sql_query = "SELECT * FROM `education_logo`;";
+        $result = $this->conn->query($sql_query);
+        $table3Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table3Response[] = $row;
+        }
+        if (count($table3Response) > 0) {
+            $response['education_logo'] = $table3Response;
+        }
+
+        $sql_query = "SELECT * FROM `our_team`;";
+        $result = $this->conn->query($sql_query);
+        $table4Response = array();
+        while ($row = $result->fetch_assoc()) {
+            $table4Response[] = $row;
+        }
+        if (count($table4Response) > 0) {
+            $response['our_team'] = $table4Response;
+        }
 
         if (count($response) > 0) {
             $result = array(
@@ -535,38 +600,6 @@ class DbHandler {
         }
         return $result;
     }
-
-    // public function fetchblogInnerContent()
-    // {
-    //     $sql_query="CALL fetchblogInnerContent()"; 
-    //     $stmt = $this->conn->query($sql_query); 
-    //     $this->conn->next_result();           
-    //     $response = array();
-    //     while ( $row = $stmt->fetch_assoc()) {     
-    //         $response = $row;
-    //     }
-
-    //     $stmt->close();
-
-    //     if (count($response)>0)
-    //     {
-    //         $result=array(
-    //             'success'=>true,
-    //             'Message'=> "Content fetched successfully",
-    //             'Status'=> "Success",
-    //             'Response'=>$response
-    //         );
-    //     }
-    //     else
-    //     {
-    //         $result=array(
-    //             'success'=>false,
-    //             'Message'=> "Failed to fetch Content",
-    //             'Status'=> "Error"
-    //         );
-    //     }
-    //     return $result;
-    // }
 
     public function fetchblogInnerContent()
 {
