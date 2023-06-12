@@ -1299,12 +1299,10 @@ class DbHandler {
         $stmt1->fetch();
         $stmt1->close();
         $result = array();
-        if ($is_done == 1) {
             if ($is_photo_set) {
                 if (!file_exists($this->image_path)) {
                     mkdir($this->image_path, 0777, true);
                 }
-
                 $extension = pathinfo($content_image['name'], PATHINFO_EXTENSION);
                 $extension_image2 = pathinfo($content_image2['name'], PATHINFO_EXTENSION);
                 $filename = time().'_img'.'.'.$extension;
@@ -1335,18 +1333,7 @@ class DbHandler {
                 );
             }
             return $result;
-
         }
-        else
-        {
-            $result = array(
-                'success' => true,
-                'Message'=> "Content Updated successfully  ",
-                'Status'=> "Success"
-            );
-        }
-        return $result;
-    }
 
 
     public function addJourneyContent($content)
